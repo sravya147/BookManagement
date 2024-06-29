@@ -42,6 +42,7 @@ import SignIn from './pages/SignIn';
 import ProfilePage from './pages/Profile';
 import SignUp from './pages/SignUp';
 import BookForm from './components/BookForm'
+import AdminPanel from './admin/AdminPanel'
 
 // Other imports
 
@@ -55,6 +56,8 @@ function App() {
           <Route path="/signUp" element={<SignUp/>}/>
           //<Route path='/profile' element={<ProfilePage/>}/>
           <Route path='/bookform' element={<BookForm/>}/>
+          <Route path='/admin' element={<AdminPanel/>}/>
+
           {/* Other routes */}
         </Routes>
       </Router>
