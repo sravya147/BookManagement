@@ -34,7 +34,7 @@ const AdminPanel = () => {
 
   const deleteUser = async (userId) => {
     try {
-      await axios.delete(`http://localhost:4000/api/user/${userId}`);
+      await axios.delete(`http://localhost:4000/api/user/delete/${userId}`);
       setUsers(users.filter(user => user._id !== userId));
     } catch (error) {
       console.error('Error deleting user:', error);
@@ -59,36 +59,40 @@ const AdminPanel = () => {
       case 'manageBooks':
         return <ManageBooks books={books} deleteBook={deleteBook} />;
       default:
-        return null;
+        return (
+          <div className="text-center text-gray-500">
+            Please select an option above to get started.
+          </div>
+        );
     }
   };
 
   return (
     <div className="container mx-auto mt-10 p-4">
-      <h1 className="text-4xl font-bold mb-10 text-center">Welcome Admin</h1>
-      
+      <h1 className="text-4xl font-bold mb-10 text-center text-indigo-600">Welcome Admin</h1>
+
       <div className="flex justify-center space-x-4 mb-6">
         <button
-          className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded transition duration-200"
+          className="bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold py-2 px-4 rounded transition duration-200"
           onClick={() => setCurrentView('bookForm')}
         >
           Create Book
         </button>
         <button
-          className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded transition duration-200"
+          className="bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold py-2 px-4 rounded transition duration-200"
           onClick={() => setCurrentView('manageUsers')}
         >
           Manage Users
         </button>
         <button
-          className="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded transition duration-200"
+          className="bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold py-2 px-4 rounded transition duration-200"
           onClick={() => setCurrentView('manageBooks')}
         >
           Manage Books
         </button>
       </div>
 
-      <div className="bg-white shadow-md rounded-lg p-6">
+      <div className="bg-white shadow-lg rounded-lg p-6">
         {renderView()}
       </div>
     </div>

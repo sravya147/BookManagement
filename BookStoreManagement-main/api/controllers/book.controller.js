@@ -71,3 +71,38 @@ export const deleteBookById = async (req, res) => {
     res.status(500).send(err.message);
   }
 };
+
+export const addReview = async (req, res) => {
+  const { id } = req.params;
+  const { review } = req.body;
+
+  try {
+    const book = await Book.findById(id);
+    if (!book) {
+      return res.status(404).send('Book not found');
+    }
+
+    book.reviews.push({ text: review });
+    await book.save();
+
+    res.status(200).send(book);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
+export const searchBooksByTitle = async (req, res) => {
+  const query = req.query.query;
+
+  try {
+    const books = await Book.find({ title: { $regex: query, $options: 'i' } });
+
+    if (!books || books.length === 0) {
+      return res.status(404).send('No books found matching the search criteria.');
+    }
+
+    res.status(200).send(books);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};

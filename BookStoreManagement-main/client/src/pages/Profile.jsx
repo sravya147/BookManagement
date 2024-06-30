@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import SignOut from '../pages/SignOut'; // Import SignOut component
-import BookForm from '../components/BookForm'; // Import BookForm component
+import SignOut from '../pages/SignOut';
+import BookForm from '../components/BookForm';
 
 const ProfilePage = () => {
   const { currentUser } = useAuth();
@@ -61,46 +61,55 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
+    <div className="max-w-md mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
       <h1 className="text-3xl font-bold mb-4 text-center">Profile Page</h1>
       {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
-      <div className="mb-8 flex flex-col items-center justify-center">
+      <div className="mb-8 flex flex-col items-center justify-center space-y-4">
         {userData.avatar && (
-          <div className="w-32 h-32 mb-4 rounded-full overflow-hidden">
+          <div className="w-32 h-32 rounded-full overflow-hidden">
             <img src={userData.avatar} alt="Avatar" className="w-full h-full object-cover" />
           </div>
         )}
-        <form onSubmit={handleUpdate} className="w-full">
+        <form onSubmit={handleUpdate} className="w-full space-y-4">
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Username:</label>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+              Username
+            </label>
             <input
               type="text"
+              id="username"
               name="username"
               value={userData.username}
               onChange={handleChange}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Email:</label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
             <input
               type="email"
+              id="email"
               name="email"
               value={userData.email}
               onChange={handleChange}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Password:</label>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
             <input
               type="password"
+              id="password"
               name="password"
               value={userData.password}
               onChange={handleChange}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             />
           </div>
           <button
@@ -112,21 +121,21 @@ const ProfilePage = () => {
           </button>
         </form>
       </div>
-      <button
-        onClick={handleDelete}
-        className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-      >
-        Delete Account
-      </button>
-      <div className="mt-8">
+      <div className="mt-6 flex justify-center space-x-4">
         <button
-          onClick={() => navigate('/BookForm')}
-          className="py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          onClick={handleDelete}
+          className="py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
         >
-          Add Book
+          Delete Account
+        </button>
+        <button
+          onClick={() => navigate(`/user/${currentUser._id}/reading-list`)}
+          className="py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+        >
+          View Reading List
         </button>
       </div>
-      <SignOut /> {/* Include the SignOut component here */}
+      <SignOut />
     </div>
   );
 };

@@ -1,137 +1,80 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
 
-const ProfilePage = () => {
-  const { currentUser, signOut } = useAuth();
-  const [userData, setUserData] = useState({ username: '', email: '', password: '', avatar: '' });
-  const [loading, setLoading] = useState(false);
+const ReadingList = () => {
+  const { currentUser } = useAuth();
+  const [readingList, setReadingList] = useState([]);
   const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (currentUser && Object.keys(currentUser).length > 0) {
-      setUserData({
-        username: currentUser.username || '',
-        email: currentUser.email || '',
-        password: '',
-        avatar: currentUser.avatar || '',
-      });
+    const fetchReadingList = async () => {
+      try {
+        const response = await axios.get(`http://localhost:4000/api/user/${currentUser._id}/reading-list`);
+        setReadingList(response.data);
+      } catch (err) {
+        setError(err.response?.data || 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (currentUser) {
+      fetchReadingList();
     }
   }, [currentUser]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUserData({ ...userData, [name]: value });
-  };
-
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const handleRemoveBook = async (bookId) => {
     try {
-      if (!currentUser || !currentUser._id) {
-        throw new Error('User ID is missing');
-      }
-      const response = await axios.post(`http://localhost:4000/api/user/update/${currentUser._id}`, userData);
-      setLoading(false);
-      setError('');
-      localStorage.setItem('currentUser', JSON.stringify(response.data));
-      alert('Profile updated successfully');
+      await axios.post(`http://localhost:4000/api/user/${currentUser._id}/reading-list/remove`, { bookId });
+      setReadingList((prevList) => prevList.filter((book) => book._id !== bookId));
     } catch (err) {
-      setLoading(false);
-      setError(err.response?.data?.message || 'Error updating profile');
+      setError(err.response?.data || 'An error occurred while removing the book');
     }
   };
 
-  const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete your account?')) {
-      try {
-        if (!currentUser || !currentUser._id) {
-          throw new Error('User ID is missing');
-        }
-        await axios.delete(`http://localhost:4000/api/user/delete/${currentUser._id}`);
-        signOut();
-        navigate('/');
-      } catch (err) {
-        setError(err.response?.data?.message || 'Error deleting account');
-      }
-    }
-  };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
 
   return (
-    <div className="max-w-lg mx-auto mt-12 p-8 bg-white shadow-lg rounded-lg">
-      <h1 className="text-4xl font-bold mb-6 text-center">Profile Page</h1>
-      {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
-      <div className="mb-8 flex flex-col items-center justify-center">
-        {userData.avatar && (
-          <div className="w-32 h-32 mb-6 rounded-full overflow-hidden">
-            <img src={userData.avatar} alt="Avatar" className="w-full h-full object-cover" />
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="max-w-7xl w-full p-8">
+        <h1 className="text-2xl font-bold mb-6 text-center">Reading List</h1>
+        {readingList.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {readingList.map((book) => (
+              <div key={book._id} className="bg-white p-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg">
+                <img
+                  className="h-64 w-full object-contain mb-4 rounded-md"
+                  src={book.image ? `http://localhost:4000/${book.image}` : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'}
+                  alt={book.title}
+                />
+                <div className="text-lg font-semibold text-black">{book.title}</div>
+                <p className="mt-2 text-sm text-gray-700">by {book.author}</p>
+                <p className="mt-2 text-sm text-gray-500">Published Date: {new Date(book.publishedDate).toDateString()}</p>
+                <p className="mt-2 text-sm text-gray-500">Pages: {book.pages}</p>
+                <div className="mt-2 text-xs text-indigo-500 font-semibold">Genre: {book.genre}</div>
+                <button
+                  className="mt-4 py-2 px-4 bg-red-500 text-white rounded"
+                  onClick={() => handleRemoveBook(book._id)}
+                >
+                  Remove from Reading List
+                </button>
+              </div>
+            ))}
           </div>
+        ) : (
+          <div className="text-center text-gray-500">No books in your reading list.</div>
         )}
-        <form onSubmit={handleUpdate} className="w-full">
-          <div className="mb-4">
-            <label className="block text-lg font-medium text-gray-700">Username:</label>
-            <input
-              type="text"
-              name="username"
-              value={userData.username}
-              onChange={handleChange}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-lg font-medium text-gray-700">Email:</label>
-            <input
-              type="email"
-              name="email"
-              value={userData.email}
-              onChange={handleChange}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-lg font-medium text-gray-700">Password:</label>
-            <input
-              type="password"
-              name="password"
-              value={userData.password}
-              onChange={handleChange}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-lg font-medium text-gray-700">Avatar URL:</label>
-            <input
-              type="text"
-              name="avatar"
-              value={userData.avatar}
-              onChange={handleChange}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-lg"
-          >
-            {loading ? 'Updating...' : 'Update Profile'}
-          </button>
-        </form>
-        <Link to="/reading-list" className="mt-6 w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-lg text-center">
-          My Reading List
-        </Link>
       </div>
-      <button
-        onClick={handleDelete}
-        className="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 text-lg mt-4"
-      >
-        Delete Account
-      </button>
     </div>
   );
 };
 
-export default ProfilePage;
+export default ReadingList;

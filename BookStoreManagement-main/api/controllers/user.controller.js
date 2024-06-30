@@ -73,18 +73,7 @@ export const updateUser = async (req, res, next) => {
 };
 
 
-export const deleteUser = async (req, res, next) => {
-  if (req.user.id !== req.params.id)
-    return next(errorHandler(401, 'You can only delete your own account!'));
-  try {
-    await User.findByIdAndDelete(req.params.id);
-    res.clearCookie('access_token');
-    
-    res.status(200).json('User has been deleted!');
-  } catch (error) {
-    next(error);
-  }
-};
+
 
 // export const getUser = async (req, res, next) => {
 //   try {
@@ -99,6 +88,23 @@ export const deleteUser = async (req, res, next) => {
 //     next(error);
 //   }
 // };
+export const deleteUser = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Optionally, perform additional clean-up tasks (e.g., delete related data)
+
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    next(error);
+  }
+};
 
 export const getUser = async (req, res, next) => {
   try {
@@ -188,7 +194,8 @@ export const removeBookFromReadingList = async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).send('User not found');
 
-    user.readingList = user.readingList.filter(id => id.toString() !== bookId);
+    // Filter out null or undefined values before removing the book
+    user.readingList = user.readingList.filter(id => id && id.toString() !== bookId);
     await user.save();
 
     res.status(200).send(user);

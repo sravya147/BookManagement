@@ -43,6 +43,12 @@ import ProfilePage from './pages/Profile';
 import SignUp from './pages/SignUp';
 import BookForm from './components/BookForm'
 import AdminPanel from './admin/AdminPanel'
+import ReadingList from './pages/ReadingList';
+import BookDetails from './pages/Book';
+import AllBooks from './pages/AllBooks';
+import Home from './pages/Home';
+import AboutPage from './pages/About';
+
 
 // Other imports
 
@@ -57,6 +63,17 @@ function App() {
           //<Route path='/profile' element={<ProfilePage/>}/>
           <Route path='/bookform' element={<BookForm/>}/>
           <Route path='/admin' element={<AdminPanel/>}/>
+          <Route path="/user/:id/reading-list" element={<ReadingList />} />
+          <Route path="/book/:id" element={<BookDetails />} />
+          <Route path='/Allbook' element={<AllBooks/>}/>
+          <Route path='/' element={<Home/>}/>
+          <Route path='/about' element={<AboutPage/>}/>
+
+          
+          
+
+          
+
 
           {/* Other routes */}
         </Routes>

@@ -1,5 +1,5 @@
 import express from 'express';
-import { createReadingList, addBookToReadingList, removeBookFromReadingList, updateUser,deleteUser,getUser,getReadingList  } from '../controllers/user.controller.js';
+import { createReadingList, addBookToReadingList, removeBookFromReadingList, updateUser,deleteUser,getUser,getReadingList,getAllUsers } from '../controllers/user.controller.js';
 import { verifyToken } from '../utils/verifyUser.js';
 const router = express.Router();
 
@@ -7,6 +7,7 @@ const router = express.Router();
 router.post('/update/:id', updateUser)
 router.delete('/delete/:id', deleteUser)
 router.get('/:id',getUser)
+router.get('/',getAllUsers)
 
 
 

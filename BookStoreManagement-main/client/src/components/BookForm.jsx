@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const BookForm = () => {
@@ -11,6 +12,8 @@ const BookForm = () => {
     description: '',
     image: null
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,6 +53,7 @@ const BookForm = () => {
         description: '',
         image: null
       });
+      navigate(`/book/${response.data._id}`);
     } catch (error) {
       console.error(error);
       alert('Failed to create book');
@@ -57,9 +61,9 @@ const BookForm = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <h2 className="text-2xl font-bold mb-6">Create a New Book</h2>
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg">
+    <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+      <h2 className="text-3xl font-bold mb-6 text-center text-indigo-600">Create a New Book</h2>
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
             Title
@@ -70,7 +74,7 @@ const BookForm = () => {
             id="title"
             value={formData.title}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             required
           />
         </div>
@@ -84,7 +88,7 @@ const BookForm = () => {
             id="author"
             value={formData.author}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             required
           />
         </div>
@@ -98,7 +102,7 @@ const BookForm = () => {
             id="publishedDate"
             value={formData.publishedDate}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             required
           />
         </div>
@@ -112,7 +116,7 @@ const BookForm = () => {
             id="pages"
             value={formData.pages}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             required
           />
         </div>
@@ -126,7 +130,7 @@ const BookForm = () => {
             id="genre"
             value={formData.genre}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             required
           />
         </div>
@@ -139,7 +143,7 @@ const BookForm = () => {
             id="description"
             value={formData.description}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             required
           />
         </div>
@@ -152,12 +156,12 @@ const BookForm = () => {
             name="image"
             id="image"
             onChange={handleFileChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
         <button
           type="submit"
-          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
+          className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           Create Book
         </button>

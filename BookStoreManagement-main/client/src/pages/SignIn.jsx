@@ -15,7 +15,15 @@ const SignIn = () => {
   const handleSignIn = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
+      // Check for admin credentials first
+      if (email === 'admin@gmail.com' && password === 'admin') {
+        setLoading(false);
+        navigate('/admin');
+        return;
+      }
+
       const response = await axios.post('http://localhost:4000/api/auth/signin', { email, password });
       const { user, token } = response.data;
       signIn(user, token);
