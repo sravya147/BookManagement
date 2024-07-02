@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
 
 const reviewSchema = new mongoose.Schema({
-  text: { type: String, required: true }
+  text: { type: String, required: true },
+  rating: { type: Number, required: true },  // Added rating field
+  username: { type: String, required: true }  // Added username field
 }, { timestamps: true });
 
 const BookSchema = new mongoose.Schema({

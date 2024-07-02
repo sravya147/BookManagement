@@ -34,16 +34,7 @@ const AboutPage = () => {
       </section>
 
       {/* Community Section */}
-      <section className="py-12 bg-gray-100">
-        <div className="container mx-auto px-6 lg:px-24">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-6">Join Our Community</h2>
-            <p className="text-lg text-gray-700 leading-relaxed">
-              Connect with fellow book lovers, participate in discussions, and share your favorite reads. BookHub is more than just a website; it's a community where ideas and stories come to life.
-            </p>
-          </div>
-        </div>
-      </section>
+   
 
       {/* Reviews Section */}
       <section className="bg-white py-12">

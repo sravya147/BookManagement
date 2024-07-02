@@ -53,7 +53,7 @@ const ProfilePage = () => {
           throw new Error('User ID is missing');
         }
         await axios.delete(`http://localhost:4000/api/user/delete/${currentUser._id}`);
-        navigate('/');
+        navigate('/signout');
       } catch (err) {
         setError(err.response?.data?.message || 'Error deleting account');
       }

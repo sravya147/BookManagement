@@ -3,17 +3,18 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FaStar } from 'react-icons/fa';
+import StarRating from '../components/StarRating';
 
 const Book = () => {
   const { id } = useParams();
-  const { currentUser } = useAuth();
+  const { currentUser, username } = useAuth();  // Get `username` from `AuthContext`
 
   const [book, setBook] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState('');
-  const [rating, setRating] = useState(0); // Track user selected rating
+  const [rating, setRating] = useState(0);
   const [error, setError] = useState('');
-  const [inReadingList, setInReadingList] = useState(false); // To track if the book is in the reading list
+  const [inReadingList, setInReadingList] = useState(false);
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -22,7 +23,6 @@ const Book = () => {
         setBook(response.data);
         setReviews(response.data.reviews || []);
 
-        // Check if the book is in the reading list of the current user
         if (currentUser) {
           const readingListResponse = await axios.get(`http://localhost:4000/api/user/${currentUser._id}/reading-list`);
           const isInList = readingListResponse.data.some(item => item._id === response.data._id);
@@ -42,7 +42,7 @@ const Book = () => {
       setBook(response.data);
       setReviews(response.data.reviews || []);
       setNewReview('');
-      setRating(0); // Reset rating after submitting
+      setRating(0);
     } catch (error) {
       setError('Failed to submit review');
     }
@@ -67,7 +67,6 @@ const Book = () => {
   };
 
   const handleStarClick = (value) => {
-    // Set the rating state based on the star clicked
     setRating(value);
   };
 
@@ -119,46 +118,43 @@ const Book = () => {
                       <div className="text-lg font-semibold">{review.username}</div>
                       <div className="text-sm text-gray-500">{new Date(review.createdAt).toLocaleDateString()}</div>
                     </div>
-                    <p className="text-gray-700">{review.text}</p>
-                    {review.rating && (
-                      <div className="flex items-center mt-2">
-                        {[...Array(review.rating)].map((_, index) => (
-                          <FaStar key={index} className="text-yellow-500" />
-                        ))}
-                      </div>
-                    )}
+                    <div className="flex items-center mb-2">
+                      {[...Array(5)].map((_, index) => (
+                        <FaStar
+                          key={index}
+                          className={`text-lg ${index < review.rating ? 'text-yellow-500' : 'text-gray-300'}`}
+                        />
+                      ))}
+                    </div>
+                    <p>{review.text}</p>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-gray-500">No reviews yet</p>
+              <p>No reviews yet.</p>
             )}
+          </div>
 
+          {currentUser && (
             <form onSubmit={handleReviewSubmit} className="mt-8">
+              <div className="flex items-center mb-4">
+                <StarRating rating={rating} onStarClick={handleStarClick} />
+              </div>
               <textarea
-                className="w-full p-2 border rounded-md mb-4"
-                rows="4"
-                placeholder="Write your review here..."
                 value={newReview}
                 onChange={(e) => setNewReview(e.target.value)}
-                required
-              ></textarea>
-
-              <div className="flex items-center mb-4 space-x-2">
-                {[...Array(5)].map((_, index) => (
-                  <FaStar
-                    key={index}
-                    className={`text-2xl cursor-pointer ${index < rating ? 'text-yellow-500' : 'text-gray-300'}`}
-                    onClick={() => handleStarClick(index + 1)}
-                  />
-                ))}
-              </div>
-
-              <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-md">
+                placeholder="Write your review"
+                className="w-full p-2 border border-gray-300 rounded-md"
+                rows="4"
+              />
+              <button
+                type="submit"
+                className="mt-2 bg-blue-500 text-white py-2 px-4 rounded-md"
+              >
                 Submit Review
               </button>
             </form>
-          </div>
+          )}
         </div>
       </div>
     </div>

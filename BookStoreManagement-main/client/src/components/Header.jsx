@@ -1,9 +1,8 @@
-// components/Header.js
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
+import { BsBookHalf } from 'react-icons/bs';
 
 const Header = () => {
   const { currentUser } = useAuth();
@@ -14,7 +13,7 @@ const Header = () => {
         <div className="flex items-center space-x-4">
           <div className="text-white text-2xl font-bold tracking-wide">
             <Link to="/" className="flex items-center space-x-2">
-              <span className="text-3xl">📚</span>
+              <BsBookHalf className="text-3xl" />
               <span>BookNest</span>
             </Link>
           </div>
@@ -44,7 +43,7 @@ const Header = () => {
             placeholder="Search books..."
             className="bg-transparent focus:outline-none w-full text-gray-700"
           />
-          <button>
+          <button type="submit">
             <FaSearch className="text-purple-600" />
           </button>
         </form>

@@ -1,32 +1,16 @@
-import React, { useState } from 'react';
-import { FaStar, FaRegStar } from 'react-icons/fa';
+import React from 'react';
+import { FaStar } from 'react-icons/fa';
 
-const StarRating = ({ value, onChange }) => {
-  const [hover, setHover] = useState(null);
-
+const StarRating = ({ rating, onStarClick }) => {
   return (
-    <div className="flex items-center">
-      {[...Array(5)].map((_, index) => {
-        const ratingValue = index + 1;
-
-        return (
-          <label key={index}>
-            <input
-              type="radio"
-              name="rating"
-              value={ratingValue}
-              onClick={() => onChange(ratingValue)}
-            />
-            <FaStar
-              className="cursor-pointer text-yellow-400"
-              size={30}
-              onMouseEnter={() => setHover(ratingValue)}
-              onMouseLeave={() => setHover(null)}
-              color={(hover || value) >= ratingValue ? "#ffc107" : "#e4e5e9"}
-            />
-          </label>
-        );
-      })}
+    <div className="flex">
+      {[...Array(5)].map((_, index) => (
+        <FaStar
+          key={index}
+          className={`cursor-pointer ${index < rating ? 'text-yellow-500' : 'text-gray-300'}`}
+          onClick={() => onStarClick(index + 1)}
+        />
+      ))}
     </div>
   );
 };

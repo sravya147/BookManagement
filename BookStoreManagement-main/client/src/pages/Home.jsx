@@ -8,6 +8,8 @@ const Home = () => {
   const [error, setError] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('All');
   const [selectedDate, setSelectedDate] = useState('Any');
+  const [visibleBooks, setVisibleBooks] = useState(9);
+  const [allBooksLoaded, setAllBooksLoaded] = useState(false);
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -26,10 +28,14 @@ const Home = () => {
 
   const handleGenreChange = (e) => {
     setSelectedGenre(e.target.value);
+    setVisibleBooks(9); // Reset to initial books to show when genre changes
+    setAllBooksLoaded(false); // Reset the "Show More" button
   };
 
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
+    setVisibleBooks(9); // Reset to initial books to show when date changes
+    setAllBooksLoaded(false); // Reset the "Show More" button
   };
 
   const sortBooksByDate = (booksToSort) => {
@@ -37,14 +43,6 @@ const Home = () => {
       return new Date(b.publishedDate) - new Date(a.publishedDate);
     });
   };
-
-  if (loading) {
-    return <div className="container mx-auto mt-8 text-center">Loading...</div>;
-  }
-
-  if (error) {
-    return <div className="container mx-auto mt-8 text-center text-red-500">{error}</div>;
-  }
 
   // Apply filters
   let filteredBooks = [...books];
@@ -55,11 +53,28 @@ const Home = () => {
     filteredBooks = sortBooksByDate(filteredBooks);
   }
 
-  // Display only 9 books (3 per row)
-  const booksToShow = filteredBooks.slice(0, 9);
+  // Display only books up to `visibleBooks` count
+  const booksToShow = filteredBooks.slice(0, visibleBooks);
+
+  // Load more books on button click
+  const handleShowMore = () => {
+    if (visibleBooks >= filteredBooks.length) {
+      setAllBooksLoaded(true);
+    } else {
+      setVisibleBooks(prevVisibleBooks => prevVisibleBooks + 9);
+    }
+  };
 
   // Extract unique genres for filter dropdown
   const genres = ['All', ...new Set(books.map(book => book.genre))];
+
+  if (loading) {
+    return <div className="container mx-auto mt-8 text-center">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="container mx-auto mt-8 text-center text-red-500">{error}</div>;
+  }
 
   return (
     <div className="container mx-auto mt-8 px-4 flex">
@@ -89,28 +104,42 @@ const Home = () => {
         </select>
       </div>
 
+
       {/* Books grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-        {booksToShow.map((book) => (
-          <Link to={`/book/${book._id}`} key={book._id}>
-            <div className="bg-white p-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg">
-              <img
-                src={book.image ? `http://localhost:4000/${book.image}` : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'}
-                alt={book.title}
-                className="h-48 w-full object-contain mb-4 rounded-md"
-              />
-              <div className="text-lg font-semibold text-black">{book.title}</div>
-              <p className="mt-2 text-sm text-gray-700">by {book.author}</p>
-              <p className="mt-2 text-xs text-gray-600">Genre: {book.genre}</p>
-              <p className="mt-1 text-xs text-gray-600">Published: {new Date(book.publishedDate).toDateString()}</p>
-              <div className="mt-4 flex justify-end">
-                <button className="bg-indigo-500 text-white text-xs font-semibold py-1 px-2 rounded hover:bg-indigo-700">
-                  Click for details
-                </button>
+      <div className="flex-1">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          {booksToShow.map((book) => (
+            <Link to={`/book/${book._id}`} key={book._id}>
+              <div className="bg-white p-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg">
+                <img
+                  src={book.image ? `http://localhost:4000/${book.image}` : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'}
+                  alt={book.title}
+                  className="h-48 w-full object-contain mb-4 rounded-md"
+                />
+                <div className="text-lg font-semibold text-black">{book.title}</div>
+                <p className="mt-2 text-sm text-gray-700">by {book.author}</p>
+                <p className="mt-2 text-xs text-gray-600">Genre: {book.genre}</p>
+                <p className="mt-1 text-xs text-gray-600">Published: {new Date(book.publishedDate).toDateString()}</p>
+                <div className="mt-4 flex justify-end">
+                  <button className="bg-indigo-500 text-white text-xs font-semibold py-1 px-2 rounded hover:bg-indigo-700">
+                    Click for details
+                  </button>
+                </div>
               </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          ))}
+        </div>
+
+        {/* Show More Button */}
+        <div className="mt-6 flex justify-center">
+          <button
+            onClick={handleShowMore}
+            className={`bg-indigo-500 text-white text-xs font-semibold py-2 px-4 rounded hover:bg-indigo-700 ${allBooksLoaded ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={allBooksLoaded}
+          >
+            {allBooksLoaded ? 'No More Books' : 'Show More'}
+          </button>
+        </div>
       </div>
     </div>
   );

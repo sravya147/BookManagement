@@ -71,17 +71,27 @@
 // import User from "../models/user.model.js";
 // import { errorHandler } from "../utils/error.js";
 
+
+
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
   const hashpass = bcryptjs.hashSync(password, 10);
   const newUser = new User({ username, email, password: hashpass });
+
   try {
     await newUser.save();
-    res.status(201).send(newUser);
+    res.status(201).json({
+      user: {
+        id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+      }
+    });
   } catch (error) {
     next(error);
   }
 };
+
 
 // export const signin = async (req, res, next) => {
 //   const { email, password } = req.body;
@@ -120,6 +130,7 @@ export const signIn = async (req, res, next) => {
     next(error);
   }
 };
+
 
 export const signOut = async (req, res, next) => {
   try {
