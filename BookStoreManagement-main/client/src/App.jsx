@@ -48,6 +48,7 @@ import BookDetails from './pages/Book';
 import AllBooks from './pages/AllBooks';
 import Home from './pages/Home';
 import AboutPage from './pages/About';
+import Search from './pages/search';
 
 
 // Other imports
@@ -68,6 +69,7 @@ function App() {
           <Route path='/Allbook' element={<AllBooks/>}/>
           <Route path='/' element={<Home/>}/>
           <Route path='/about' element={<AboutPage/>}/>
+          <Route path='/search' element={<Search/>}/>
 
           
           

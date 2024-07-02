@@ -16,13 +16,23 @@ export const createBook = async (req, res) => {
   }
 };
 
-
-export const getAllBooks = async (req, res) => {
+export const getBooks = async (req, res, next) => {
   try {
-    const books = await Book.find();
-    res.status(200).send(books);
-  } catch (err) {
-    res.status(500).send(err.message);
+    const limit = parseInt(req.query.limit) || 9;
+    const startIndex = parseInt(req.query.startIndex) || 0;
+
+  
+    const searchTerm = req.query.searchTerm || '';
+
+    const books = await Book.find({
+      title: { $regex: searchTerm, $options: 'i' },
+    })
+      .limit(limit)
+      .skip(startIndex);
+
+    return res.status(200).json(books);
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -74,6 +84,7 @@ export const deleteBookById = async (req, res) => {
 
 
 
+
 export const addReview = async (req, res, next) => {
   const { id } = req.params;
   const { review, rating } = req.body;
@@ -99,18 +110,3 @@ export const addReview = async (req, res, next) => {
 
 
 
-export const searchBooksByTitle = async (req, res) => {
-  const query = req.query.query;
-
-  try {
-    const books = await Book.find({ title: { $regex: query, $options: 'i' } });
-
-    if (!books || books.length === 0) {
-      return res.status(404).send('No books found matching the search criteria.');
-    }
-
-    res.status(200).send(books);
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
-};
